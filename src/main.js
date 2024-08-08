@@ -13,10 +13,34 @@ export const INITIAL_SESSION = {
 	messages: [],
 };
 
+const ALLOWED_USERS = [1762412636]; //Telegram user IDs can be found using @userinfobot
+
+//Authorization
+// function isAuthorizedUser(context) {
+// 	return ALLOWED_USERS.includes(context.message.from.id);
+// }
+
+// bot.use(async (context, next) => {
+// 	if (!isAuthorizedUser(context)) {
+// 		await context.sendSticker(
+// 			"https://tlgrm.eu/stickers/HackerBoyStickers#view-3https://tlgrm.eu/_/stickers/ea5/382/ea53826d-c192-376a-b766-e5abc535f1c9/3.webp"
+// 		);
+// 		await context.reply("You are not authorized to use this bot.");
+// 		return;
+// 	}
+// 	return next();
+// });
+
 export async function initCommand(context) {
 	context.session = INITIAL_SESSION;
 	await context.sendSticker(
 		"https://tlgrm.eu/_/stickers/ea5/382/ea53826d-c192-376a-b766-e5abc535f1c9/96/7.webp"
+	);
+	await context.reply(
+		"Welcome to voice bot communication with chatGPT. Waiting for voice or text message.."
+	);
+	await context.reply(
+		"To start new conversation with bot - use: /new or /start"
 	);
 	await context.reply("Waiting for voice or text message..");
 }
@@ -37,6 +61,9 @@ export async function processTextToChat(context, content) {
 
 bot.command("new", initCommand);
 bot.command("start", initCommand);
+bot.command("get_id", (context) => {
+	context.reply(`Your user ID is ${context.message.from.id}`);
+});
 
 bot.on(message("text"), async (context) => {
 	context.session ??= INITIAL_SESSION;
