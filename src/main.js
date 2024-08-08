@@ -1,12 +1,12 @@
 import { Telegraf, session } from "telegraf";
 import { message } from "telegraf/filters";
-import conf from "config";
 import { ogg } from "./voiceConverter.js";
 import { openAI } from "./openAI.js";
 import { code } from "telegraf/format";
 import { deleteFile } from "./utils.js";
+import "dotenv-flow/config";
 
-const bot = new Telegraf(conf.get("TELEGRAM_TOKEN"));
+const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 bot.use(session());
 
 export const INITIAL_SESSION = {
@@ -15,6 +15,9 @@ export const INITIAL_SESSION = {
 
 export async function initCommand(context) {
 	context.session = INITIAL_SESSION;
+	await context.sendSticker(
+		"https://tlgrm.eu/_/stickers/ea5/382/ea53826d-c192-376a-b766-e5abc535f1c9/96/7.webp"
+	);
 	await context.reply("Waiting for voice or text message..");
 }
 
@@ -38,9 +41,7 @@ bot.command("start", initCommand);
 bot.on(message("text"), async (context) => {
 	context.session ??= INITIAL_SESSION;
 	try {
-		await context.reply(
-			code("Message accepted. Waiting response from server...")
-		);
+		await context.reply(code("Message accepted. Please wait..."));
 		await processTextToChat(context, context.message.text);
 	} catch (e) {
 		console.log(`Error while text message`, e.message);
@@ -50,9 +51,7 @@ bot.on(message("text"), async (context) => {
 bot.on(message("voice"), async (context) => {
 	context.session ??= INITIAL_SESSION;
 	try {
-		await context.reply(
-			code("Message accepted. Waiting response from server..")
-		);
+		await context.reply(code("Message accepted. Please wait.."));
 		const link = await context.telegram.getFileLink(
 			context.message.voice.file_id
 		);

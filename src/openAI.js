@@ -1,6 +1,6 @@
 import OpenAi from "openai";
-import config from "config";
 import fs from "fs";
+import "dotenv-flow/config";
 
 class OpenAI {
 	roles = {
@@ -56,4 +56,4 @@ class OpenAI {
 	}
 }
 
-export const openAI = new OpenAI(config.get("OPENAI-APIKEY"));
+export const openAI = new OpenAI(process.env.OPENAI_APIKEY);
