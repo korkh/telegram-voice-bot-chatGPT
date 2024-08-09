@@ -19,7 +19,7 @@ class OpenAI {
 	async chat(messages) {
 		try {
 			const response = await this.openai.chat.completions.create({
-				model: "gpt-3.5-turbo",
+				model: "gpt-4o-mini",
 				messages,
 			});
 

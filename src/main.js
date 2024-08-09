@@ -13,32 +13,30 @@ export const INITIAL_SESSION = {
 	messages: [],
 };
 
-const ALLOWED_USERS = [1762412636]; //Telegram user IDs can be found using @userinfobot
+const ALLOWED_USERS = [1762412636, 5636807255]; //Telegram user IDs can be found using @userinfobot
 
 //Authorization
-// function isAuthorizedUser(context) {
-// 	return ALLOWED_USERS.includes(context.message.from.id);
-// }
+function isAuthorizedUser(context) {
+	return ALLOWED_USERS.includes(context.message.from.id);
+}
 
-// bot.use(async (context, next) => {
-// 	if (!isAuthorizedUser(context)) {
-// 		await context.sendSticker(
-// 			"https://tlgrm.eu/stickers/HackerBoyStickers#view-3https://tlgrm.eu/_/stickers/ea5/382/ea53826d-c192-376a-b766-e5abc535f1c9/3.webp"
-// 		);
-// 		await context.reply("You are not authorized to use this bot.");
-// 		return;
-// 	}
-// 	return next();
-// });
+bot.use(async (context, next) => {
+	if (!isAuthorizedUser(context)) {
+		await context.sendSticker(
+			"https://tlgrm.eu/stickers/HackerBoyStickers#view-3https://tlgrm.eu/_/stickers/ea5/382/ea53826d-c192-376a-b766-e5abc535f1c9/3.webp"
+		);
+		await context.reply("You are not authorized to use this bot.");
+		return;
+	}
+	return next();
+});
 
 export async function initCommand(context) {
 	context.session = INITIAL_SESSION;
 	await context.sendSticker(
 		"https://tlgrm.eu/_/stickers/ea5/382/ea53826d-c192-376a-b766-e5abc535f1c9/96/7.webp"
 	);
-	await context.reply(
-		"Welcome to voice bot communication with chatGPT. Waiting for voice or text message.."
-	);
+	await context.reply("Welcome to voice bot communication with chatGPT.");
 	await context.reply(
 		"To start new conversation with bot - use: /new or /start"
 	);
@@ -88,7 +86,6 @@ bot.on(message("voice"), async (context) => {
 		deleteFile(oggFilePath);
 
 		const text = await openAI.transcription(mp3FilePath);
-		console.log("Transcribed Text:", text);
 
 		if (!text) {
 			throw new Error("Transcription returned an empty result");
@@ -100,9 +97,6 @@ bot.on(message("voice"), async (context) => {
 		});
 
 		const response = await openAI.chat(context.session.messages);
-
-		console.log("Response content", response);
-
 		if (!response || !response.content) {
 			throw new Error("Chat response returned an empty result");
 		}
