@@ -40,7 +40,6 @@ export async function initCommand(context) {
 	await context.reply(
 		"To start new conversation with bot - use: /new or /start"
 	);
-	await context.reply("Waiting for voice or text message..");
 }
 
 export async function processTextToChat(context, content) {
